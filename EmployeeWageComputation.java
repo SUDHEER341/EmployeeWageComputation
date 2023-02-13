@@ -1,77 +1,25 @@
 package com.employeewage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-
-interface IEmployeeWageComputation
+public class EmployeeWageComputation
 {
-    public void addCompany(String companyName, int wagePerHr, int maxWorkingDays, int maxWorkingHrs);
 
-    public void calculateTotalWage();
+    static final int PART_TIME = 1;
+    static final int FULL_TIME = 2;
 
-    public int getTotalEmpWage(String companyName);
-}
-
-class CompanyEmpWage
-{
-    // instance constants
     final String COMPANY_NAME;
     final int WAGE_PER_HR;
     final int MAX_WORKING_DAYS;
     final int MAX_WORKING_HRS;
-    // instance variable
-    int totalEmpWage;
+    
+    int totalWage;
 
-    //parameterized constructor to get and set the values
-    CompanyEmpWage(String companyName, int wagePerHr, int maxWorkingDays, int maxWorkingHrs)
+    EmployeeWageComputation(String companyName, int wagePerHr, int maxWorkingDays, int maxWorkingHrs)
     {
         COMPANY_NAME = companyName;
         WAGE_PER_HR = wagePerHr;
         MAX_WORKING_DAYS = maxWorkingDays;
         MAX_WORKING_HRS = maxWorkingHrs;
-        totalEmpWage = 0;
-    }
-
-    void setTotalEmployeeWage(int totalEmpWage)
-    {
-        this.totalEmpWage = totalEmpWage;
-    }
-
-    @Override
-    public String toString() {
-        System.out.println("Details of " + COMPANY_NAME + " employee");
-        System.out.println("-----------------------------------------------------");
-        System.err.println("Wage per hour:" + WAGE_PER_HR);
-        System.out.println("Maximum working days:" + MAX_WORKING_DAYS);
-        System.out.println("Maximum working hours:" + MAX_WORKING_HRS);
-        return "Total wage for a month of " + COMPANY_NAME + " employee is " + totalEmpWage + "\n";
-    }
-}
-
-class EmployeeWageComputation implements IEmployeeWageComputation
-{
-
-    public static final int PART_TIME = 1;
-    public static final int FULL_TIME = 2;
-
-
-    ArrayList<CompanyEmpWage> companies;
-
-    HashMap<String, Integer> totalEmpWages;
-
-    public EmployeeWageComputation()
-    {
-        companies = new ArrayList<>();
-        totalEmpWages = new HashMap<>();
-    }
-
-
-    public void addCompany(String companyName, int wagePerHr, int maxWorkingDays, int maxWorkingHrs)
-    {
-        CompanyEmpWage company = new CompanyEmpWage(companyName, wagePerHr, maxWorkingDays, maxWorkingHrs);
-        companies.add(company);
-        totalEmpWages.put(companyName, 0);
+        totalWage = 0;
     }
 
     int generateEmployeeType()
@@ -92,50 +40,43 @@ class EmployeeWageComputation implements IEmployeeWageComputation
         }
     }
 
-    public void calculateTotalWage()
+    void calculateTotalWage()
     {
-        for (CompanyEmpWage company : companies)
-        {
-            int totalWage = calculateTotalWage(company);
-            company.setTotalEmployeeWage(totalWage);
-            System.out.println(company);
-        }
-    }
-
-    int calculateTotalWage(CompanyEmpWage companyEmpWage)
-    {
-        System.out.println("Computation of total wage of " + companyEmpWage.COMPANY_NAME + " employee");
+        System.out.println("Computation of total wage of " + COMPANY_NAME + " employee");
         System.out.println("-----------------------------------------------------");
-        System.out.printf("%4s\t%4s\t%2s\t%4s\n", "Day", "Workinghrs", "Wage", "Total working hrs");
-
-        int workingHrs, totalWage = 0;
-        for (int day = 1, totalWorkingHrs = 0; day <= companyEmpWage.MAX_WORKING_DAYS
-                && totalWorkingHrs <= companyEmpWage.MAX_WORKING_HRS; day++, totalWorkingHrs += workingHrs)
+        System.out.printf("%5s     %5s     %5s     %5s\n", "Day", "Workinghrs", "Wage", "Total working hrs");
+        int workingHrs;
+        for (int day = 1, totalWorkingHrs = 0; day <= MAX_WORKING_DAYS
+                && totalWorkingHrs <= MAX_WORKING_HRS; day++, totalWorkingHrs += workingHrs)
         {
             int empType = generateEmployeeType();
             workingHrs = getWorkingHrs(empType);
-            int wage = workingHrs * companyEmpWage.WAGE_PER_HR;
+            int wage = workingHrs * WAGE_PER_HR;
             totalWage += wage;
-            System.out.printf("%4d\t%5d\t%10d\t%10d\n", day, workingHrs, wage, totalWorkingHrs + workingHrs);
+            System.out.printf("%5d       %5d      %5d      %5d\n", day, workingHrs, wage, totalWorkingHrs + workingHrs);
         }
-        totalEmpWages.put(companyEmpWage.COMPANY_NAME, totalWage);
-        return totalWage;
+
     }
 
-    public int getTotalEmpWage(String companyName)
+    public String toString()
     {
-        return totalEmpWages.get(companyName);
+        System.out.println("Details of " + COMPANY_NAME + " employee");
+        System.out.println("-----------------------------------------------------");
+        System.err.println("Wage per hour:" + WAGE_PER_HR);
+        System.out.println("Maximum working days:" + MAX_WORKING_DAYS);
+        System.out.println("Maximum working hours:" + MAX_WORKING_HRS);
+        return "Total wage for a month of " + COMPANY_NAME + " employee is " + totalWage + "\n";
     }
 
     public static void main(String args[])
     {
-        EmployeeWageComputation employeeWageComputation = new EmployeeWageComputation();
-        employeeWageComputation.addCompany("Microsoft", 4, 30, 100);
-        employeeWageComputation.addCompany("Google", 5, 40, 170);
-        employeeWageComputation.addCompany("Amazon", 19, 10, 150);
-        employeeWageComputation.calculateTotalWage();
-        String query = "Google";
-        int totalWage = employeeWageComputation.getTotalEmpWage(query);
-        System.out.println("Total Employee Wage for " + query + " company is " + totalWage);
+        EmployeeWageComputation google = new EmployeeWageComputation("Google", 8, 20, 100);
+        EmployeeWageComputation microsoft = new EmployeeWageComputation("Microsoft", 4, 30, 150);
+
+        google.calculateTotalWage();
+        System.out.println(google);
+
+        microsoft.calculateTotalWage();
+        System.out.println(microsoft);
     }
 }
